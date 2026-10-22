@@ -1,0 +1,40 @@
+yaml
+name: Unzip in repo
+
+on:
+  workflow_dispatch:
+    inputs:
+      zip_path:
+        description: "Path to the ZIP file in the repo"
+        required: true
+        default: "lux.zip"
+      dest_dir:
+        description: "Destination folder"
+        required: true
+        default: "extracted"
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Unzip file
+        run: |
+          set -e
+          mkdir -p "${{ inputs.dest_dir }}"
+          unzip "${{ inputs.zip_path }}" -d "${{ inputs.dest_dir }}"
+          rm "${{ inputs.zip_path }}"
+
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "${{ inputs.dest_dir }}"
+          git add -u
+          git commit -m "Unzip ${{ inputs.zip_path }}" || exit 0
+          git push
