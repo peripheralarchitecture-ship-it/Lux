@@ -1,0 +1,37 @@
+name: Unzip lux.zip
+
+on:
+  push:
+    paths:
+      - "lux.zip"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Unzip into repo root
+        run: |
+          if [ ! -f lux.zip ]; then
+            echo "No lux.zip found, nothing to do."
+            exit 0
+          fi
+          unzip -q -o lux.zip -x ".git/*" ".github/*"
+          rm lux.zip
+
+      - name: Commit extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+          else
+            git commit -m "Unpack lux.zip"
+            git push
+          fi
