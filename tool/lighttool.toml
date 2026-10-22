@@ -1,0 +1,11 @@
+[tool]
+id = "com.thelightphone.lux"
+label = "Lux"
+versionCode = 1
+versionName = "1.0.0"
+# the ambient light sensor needs no permission, and Lux never touches the network
+permissions = []
+capabilities = []
+# for the LightOS emulator, use the line below and build with -DlightSdk.allowAltServerPackage=true
+# serverPackage = "com.thelightphone.sdk.emulator"
+serverPackage = "com.lightos"
